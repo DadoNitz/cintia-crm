@@ -43,6 +43,6 @@ export function trocarTema(proximo: Tema, cx: number, cy: number) {
       const ease = p * p * (3 - 2 * p); // devagar no início pra gota aparecer, rápido no meio
       frames.push({ clipPath: poligonoLiquido(cx, cy, R * ease, p) });
     }
-    document.documentElement.animate(frames, { duration: 1300, easing: "linear", pseudoElement: "::view-transition-new(root)" });
+    document.documentElement.animate(frames, { duration: 1300, easing: "linear", fill: "forwards", pseudoElement: "::view-transition-new(root)" });
   }).catch(() => {});
 }

@@ -23,13 +23,13 @@ export function Marca({ compacta = false }: { compacta?: boolean }) {
   return (
     <div className="flex items-center gap-3">
       <svg viewBox="0 0 40 40" className="w-9 h-9 flex-none" aria-hidden>
-        <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--gold)" strokeWidth="1.2" />
-        <path d="M22.5 11a8.5 8.5 0 1 0 0 17h3.5V18.5" fill="none" stroke="var(--gold)" strokeWidth="1.7" strokeLinecap="round" />
+        <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--side-mark)" strokeWidth="1.2" />
+        <path d="M22.5 11a8.5 8.5 0 1 0 0 17h3.5V18.5" fill="none" stroke="var(--side-mark)" strokeWidth="1.7" strokeLinecap="round" />
       </svg>
       {!compacta && (
         <div className="leading-none">
-          <div style={{ letterSpacing: ".2em", fontSize: 13, color: "var(--side-ink)" }}>CINTIA MACHADO</div>
-          <div style={{ letterSpacing: ".62em", fontSize: 8.5, color: "var(--gold)", marginTop: 5, fontWeight: 500 }}>CLINIC</div>
+          <div style={{ letterSpacing: ".2em", fontSize: 13, color: "var(--side-mark)" }}>CINTIA MACHADO</div>
+          <div style={{ letterSpacing: ".62em", fontSize: 8.5, color: "var(--side-mark)", marginTop: 5, fontWeight: 500 }}>CLINIC</div>
         </div>
       )}
     </div>
@@ -43,7 +43,7 @@ export function BotaoTema({ claro = false }: { claro?: boolean }) {
     <button
       type="button"
       className={claro ? "icon-btn" : "flex items-center gap-2 w-full rounded-xl px-3 py-2.5 cursor-pointer"}
-      style={claro ? undefined : { color: "var(--side-muted)", border: "1px solid var(--side-pill)" }}
+      style={claro ? undefined : { color: "var(--side-muted)", border: "1px solid var(--side-line)" }}
       aria-label={tema === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
       onClick={(e) => {
         const r = e.currentTarget.getBoundingClientRect();
@@ -80,7 +80,7 @@ export function Sidebar() {
               <button key={id} type="button" onClick={() => ir(id)} aria-current={ativo ? "page" : undefined}
                 className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-left cursor-pointer"
                 style={{ color: ativo ? "var(--side-ink)" : "var(--side-muted)" }}>
-                {ativo && <motion.span layoutId="pill" transition={mola} className="absolute inset-0 rounded-xl" style={{ background: "var(--side-pill)", boxShadow: "inset 0 0 0 1px rgb(255 255 255 / .04)" }} />}
+                {ativo && <motion.span layoutId="pill" transition={mola} className="absolute inset-0 rounded-xl" style={{ background: "var(--side-pill)", boxShadow: "var(--shadow)" }} />}
                 {ativo && <motion.span layoutId="pill-bar" transition={mola} className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full" style={{ background: "var(--gold)" }} />}
                 <motion.span className="relative" animate={ativo ? { scale: [1, 1.22, 1], rotate: [0, -8, 0] } : { scale: 1 }} transition={{ duration: 0.45 }}>
                   <Icon size={18} strokeWidth={ativo ? 2 : 1.6} />
@@ -100,7 +100,7 @@ export function Sidebar() {
           </div>
           <BotaoTema />
           <div className="flex items-center gap-3 px-1">
-            <div className="avatar" style={{ background: "var(--gold)", color: "var(--on-gold)" }}>AN</div>
+            <div className="avatar" style={{ background: "var(--gold-btn)", color: "var(--on-gold)" }}>AN</div>
             <div className="leading-tight">
               <div className="text-[13px]">Ana</div>
               <div className="text-[11.5px]" style={{ color: "var(--side-muted)" }}>Recepção · home office</div>

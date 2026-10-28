@@ -1,30 +1,32 @@
 @import "tailwindcss";
 
-/* Identidade Cintia Machado Clinic: areia + dourado do logo; barra lateral cor de café para dar peso. */
+/* Identidade Cintia Machado Clinic, cores tiradas do logo e do Instagram:
+   dourado do logo #B3926B, fundo do logo #F7F7F7, greige do avatar #D1C9B6, areias dos destaques. */
 :root {
-  --bg: #F4F1EB; --surface: #FFFFFF; --surface-2: #FAF8F4; --line: #E7E0D5; --line-2: #D9CFC1;
-  --ink: #2B2520; --muted: #857969; --faint: #B3A797;
-  --gold: #B08D62; --gold-ink: #8A6A42; --gold-soft: #F2E9DB; --on-gold: #FFFFFF;
-  --side: #2A231D; --side-ink: #E9DFD0; --side-muted: #A6988A; --side-pill: #3A3129;
-  --ok: #5E7D55; --ok-soft: #E6EEE2; --warn: #B0672E; --warn-soft: #F7E8DA; --bad: #A64F48; --bad-soft: #F6E2DF;
-  --st-novo: #C9A77A; --st-receita: #8FA6C2; --st-protocolo: #C18F96; --st-retorno: #D29B52; --st-agendar: #9EB284; --st-agendado: #5E7D55; --st-sem: #B4AAA0;
-  --t-ouro-bg: #F3E8D6; --t-ouro: #85622F; --t-rosa-bg: #F6E3E3; --t-rosa: #9A4B52; --t-salvia-bg: #E5EDE0; --t-salvia: #4F6B47;
-  --t-ceu-bg: #E2EAF3; --t-ceu: #3F5E80; --t-terra-bg: #F3E1D3; --t-terra: #8E4F2A; --t-cinza-bg: #ECE8E2; --t-cinza: #6C6359;
-  --shadow: 0 1px 2px rgb(60 40 20 / .05), 0 6px 20px -8px rgb(60 40 20 / .14);
-  --shadow-lg: 0 30px 80px -20px rgb(40 25 10 / .35);
+  --bg: #F7F6F3; --surface: #FFFFFF; --surface-2: #F4F0EA; --line: #E6E0D6; --line-2: #D6CDBF;
+  --ink: #3A332C; --muted: #7A6F62; --faint: #B0A699;
+  --gold: #B3926B; --gold-ink: #8C6E4A; --gold-soft: #F1E9DE; --gold-btn: #8F6F4C; --on-gold: #FFFFFF;
+  --side: #D1C9B6; --side-ink: #3A332C; --side-muted: #5A5044; --side-pill: #F7F6F3; --side-mark: #FFFFFF; --side-line: #C3BAA6;
+  --ok: #6B7F59; --ok-soft: #E9EDE2; --warn: #A8683A; --warn-soft: #F6EADF; --bad: #A0544C; --bad-soft: #F5E4E1;
+  --st-novo: #C8B29D; --st-receita: #A9B4BF; --st-protocolo: #D3A9A2; --st-retorno: #D8B796; --st-agendar: #B9BFA4; --st-agendado: #8E9D78; --st-sem: #CFC9C0;
+  --t-ouro-bg: #F1E9DE; --t-ouro: #85663F; --t-rosa-bg: #F5E6E3; --t-rosa: #94544E; --t-salvia-bg: #E9ECE0; --t-salvia: #5B6B4A;
+  --t-ceu-bg: #E6EAEE; --t-ceu: #4D5F70; --t-terra-bg: #F0E3D6; --t-terra: #86553A; --t-cinza-bg: #ECE8E2; --t-cinza: #6C6359;
+  --shadow: 0 1px 2px rgb(90 70 40 / .04), 0 6px 20px -8px rgb(90 70 40 / .12);
+  --shadow-lg: 0 30px 80px -20px rgb(60 45 25 / .30);
   --font-display: var(--f-cormorant), "Times New Roman", serif;
   --font-ui: var(--f-jost), "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
+/* Escuro: mesma paleta à noite, greige queimado e o dourado mais claro para manter contraste. */
 :root[data-theme="dark"] {
-  --bg: #161310; --surface: #201C18; --surface-2: #1B1815; --line: #332D26; --line-2: #463D34;
-  --ink: #EEE7DC; --muted: #A4988A; --faint: #6F655B;
-  --gold: #C9A77A; --gold-ink: #DCC096; --gold-soft: #2E271F; --on-gold: #1B1611;
-  --side: #0F0D0B; --side-ink: #E9DFD0; --side-muted: #8C8073; --side-pill: #2A241E;
-  --ok: #9DBA8E; --ok-soft: #22291F; --warn: #E09E68; --warn-soft: #33251A; --bad: #DE8C83; --bad-soft: #35201D;
-  --st-novo: #C9A77A; --st-receita: #8FA6C2; --st-protocolo: #C9969D; --st-retorno: #DDA764; --st-agendar: #A7BC8C; --st-agendado: #86A877; --st-sem: #7F766C;
-  --t-ouro-bg: #352A1B; --t-ouro: #E1C08D; --t-rosa-bg: #3A2224; --t-rosa: #E5A5AB; --t-salvia-bg: #24301F; --t-salvia: #A9C69C;
-  --t-ceu-bg: #1E2B3A; --t-ceu: #A2BEDD; --t-terra-bg: #38251A; --t-terra: #E2A27A; --t-cinza-bg: #2C2823; --t-cinza: #B9AEA2;
+  --bg: #1C1A17; --surface: #25221E; --surface-2: #211E1B; --line: #36312B; --line-2: #4A433A;
+  --ink: #EEE8DF; --muted: #A99F92; --faint: #6E665C;
+  --gold: #C9AB86; --gold-ink: #D8BE9C; --gold-soft: #312A22; --gold-btn: #C9AB86; --on-gold: #1F1A15;
+  --side: #2A2622; --side-ink: #EEE8DF; --side-muted: #A99F92; --side-pill: #3A342D; --side-mark: #C9AB86; --side-line: #3A342D;
+  --ok: #A9BA93; --ok-soft: #262B20; --warn: #DDA477; --warn-soft: #33271D; --bad: #DE9990; --bad-soft: #35221F;
+  --st-novo: #C8B29D; --st-receita: #9AA7B4; --st-protocolo: #CF9F98; --st-retorno: #D8B796; --st-agendar: #AEB596; --st-agendado: #9BAD84; --st-sem: #6F685F;
+  --t-ouro-bg: #352C21; --t-ouro: #DCC09B; --t-rosa-bg: #3A2725; --t-rosa: #E2B0A9; --t-salvia-bg: #283023; --t-salvia: #B5C6A2;
+  --t-ceu-bg: #232B33; --t-ceu: #AEBFCF; --t-terra-bg: #382A20; --t-terra: #DDB08F; --t-cinza-bg: #2E2A25; --t-cinza: #BBB1A5;
   --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 24px -10px rgb(0 0 0 / .5);
   --shadow-lg: 0 30px 80px -20px rgb(0 0 0 / .7);
   color-scheme: dark;
@@ -42,7 +44,8 @@ input, select, textarea { font: inherit; color: var(--ink); }
 
 /* Transição de tema: a máscara líquida é animada via JS no ::view-transition-new(root) */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-::view-transition-new(root) { z-index: 2; }
+/* O snapshot novo já nasce escondido; sem isso ele aparece inteiro por 1 quadro antes da gota (a "piscada"). */
+::view-transition-new(root) { z-index: 2; clip-path: inset(100%); }
 
 @layer components {
 .display { font-family: var(--font-display); font-weight: 500; letter-spacing: -.01em; }
@@ -58,7 +61,7 @@ input, select, textarea { font: inherit; color: var(--ink); }
 .btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 9px 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, transform .1s; }
 .btn:hover { border-color: var(--line-2); background: var(--surface-2); }
 .btn:active { transform: scale(.98); }
-.btn-gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 500; }
+.btn-gold { background: var(--gold-btn); border-color: var(--gold-btn); color: var(--on-gold); font-weight: 500; }
 .btn-gold:hover { background: var(--gold-ink); border-color: var(--gold-ink); }
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover { background: var(--gold-soft); border-color: transparent; }
@@ -84,7 +87,7 @@ input, select, textarea { font: inherit; color: var(--ink); }
 .seg span { position: relative; z-index: 1; }
 
 .scroll-thin { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
-.badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--gold); color: var(--on-gold); font-size: 11px; display: inline-grid; place-items: center; font-weight: 500; }
+.badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--gold-btn); color: var(--on-gold); font-size: 11px; display: inline-grid; place-items: center; font-weight: 500; }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

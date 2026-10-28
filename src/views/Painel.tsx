@@ -56,7 +56,7 @@ export function Painel() {
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex-1 min-w-[240px]">
-          <div className="eyebrow mb-1 capitalize">{dataLonga(Date.now())}</div>
+          <div className="eyebrow mb-1">{dataLonga(Date.now())}</div>
           <h1 className="display text-[38px] leading-[1.05] m-0">{saudacao()}, <em style={{ color: "var(--gold-ink)" }}>Ana</em></h1>
           <p className="m-0 mt-1" style={{ color: "var(--muted)" }}>
             {atencao.length > 0 ? `${atencao.length} pacientes precisam de atenção hoje.` : "Tudo em dia por aqui."} {proximas.length} consultas hoje e amanhã.
@@ -71,10 +71,10 @@ export function Painel() {
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 26 }}
             whileHover={k.acao ? { y: -3 } : undefined}
             className="panel p-4 text-left flex flex-col gap-1 min-w-0"
-            style={k.destaque ? { background: "var(--side)", borderColor: "var(--side)", color: "var(--side-ink)", cursor: "default" } : { cursor: k.acao ? "pointer" : "default" }}>
-            <span className="eyebrow" style={k.destaque ? { color: "var(--gold)" } : undefined}>{k.l}</span>
+            style={k.destaque ? { background: "var(--gold-btn)", borderColor: "var(--gold-btn)", color: "var(--on-gold)", cursor: "default" } : { cursor: k.acao ? "pointer" : "default" }}>
+            <span className="eyebrow" style={k.destaque ? { color: "var(--on-gold)", opacity: 0.85 } : undefined}>{k.l}</span>
             <span className="display text-[44px] leading-none mt-1"><Contador valor={k.v} sufixo={k.suf} /></span>
-            <span className="text-[12.5px]" style={{ color: k.destaque ? "var(--side-muted)" : "var(--muted)" }}>{k.d}</span>
+            <span className="text-[12.5px]" style={{ color: k.destaque ? "var(--on-gold)" : "var(--muted)", opacity: k.destaque ? 0.85 : 1 }}>{k.d}</span>
           </motion.button>
         ))}
       </div>

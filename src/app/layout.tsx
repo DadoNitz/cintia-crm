@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Funil de pacientes, conversas e pendências da Cintia Machado Clinic.",
   robots: { index: false, follow: false },
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#2A231D" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#D1C9B6" };
 
 // Aplica o tema salvo antes da primeira pintura, sem piscar.
 const temaInicial = `try{var t=localStorage.getItem('cmc-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}`;
