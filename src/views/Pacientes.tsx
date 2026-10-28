@@ -37,7 +37,7 @@ export function Pacientes() {
         <button type="button" className="btn btn-gold" onClick={novoContato}><UserPlus size={16} />Nova paciente</button>
       </Cabecalho>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div className="kpi-row grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         {resumo.map((r) => (
           <div key={r.l} className="panel p-4"><div className="eyebrow">{r.l}</div><div className="display text-[34px] leading-none mt-2 num">{r.v}</div></div>
         ))}
@@ -56,7 +56,7 @@ export function Pacientes() {
           <option value="">WhatsApp: todas</option>
           {(["sim", "pendente", "nao"] as const).map((o) => <option key={o} value={o}>WhatsApp: {OPTIN_NOME[o]}</option>)}
         </select>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex md:flex-wrap gap-1.5 overflow-x-auto no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 w-[calc(100%+32px)] md:w-auto">
           {tags.map((t) => (
             <button key={t.nome} type="button" aria-pressed={tag === t.nome} onClick={() => setTag(tag === t.nome ? "" : t.nome)}
               className={`tag tag-${t.cor} cursor-pointer`} style={{ outline: tag === t.nome ? "2px solid var(--gold)" : "none", outlineOffset: 1 }}>{t.nome}</button>
@@ -64,7 +64,29 @@ export function Pacientes() {
         </div>
       </div>
 
-      <div className="panel overflow-hidden">
+      {/* Celular: cards em vez de tabela */}
+      <ul className="md:hidden list-none m-0 p-0 flex flex-col gap-2">
+        {lista.map((l) => (
+          <li key={l.id}>
+            <button type="button" onClick={(e) => abrirFicha(l.id, rectDe(e.currentTarget))} className="panel w-full text-left p-3.5 flex gap-3 items-start cursor-pointer active:scale-[.99] transition-transform">
+              <Avatar nome={l.nome} size={42} />
+              <span className="flex-1 min-w-0">
+                <span className="flex items-center gap-2"><span className="font-medium truncate flex-1">{l.nome}</span><span className="text-[11.5px] flex-none" style={{ color: "var(--muted)" }}>{quando(l.mov)}</span></span>
+                <span className="block text-[12.5px]" style={{ color: "var(--muted)" }}>{l.interesse} · {l.tel}</span>
+                <span className="flex flex-wrap gap-1.5 mt-2">
+                  <EtapaPill id={l.etapa} />
+                  {l.consulta && l.consulta > Date.now() - 3600e3 && <span className="chip">{data(l.consulta)} · {hora(l.consulta)}</span>}
+                  {l.optin !== "sim" && <span className="tag tag-cinza">WhatsApp {OPTIN_NOME[l.optin].toLowerCase()}</span>}
+                  {l.tags.slice(0, 2).map((t) => <TagChip key={t} nome={t} />)}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+        {lista.length === 0 && <li className="text-center py-10 text-[13px]" style={{ color: "var(--muted)" }}>Nenhuma paciente com esses filtros.</li>}
+      </ul>
+
+      <div className="hidden md:block panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[960px]">
             <thead>

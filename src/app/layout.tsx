@@ -9,8 +9,15 @@ export const metadata: Metadata = {
   title: "Cintia Machado Clinic · CRM",
   description: "Funil de pacientes, conversas e pendências da Cintia Machado Clinic.",
   robots: { index: false, follow: false },
+  applicationName: "Cintia CRM",
+  appleWebApp: { capable: true, title: "Cintia CRM", statusBarStyle: "default" },
+  icons: { apple: "/apple-touch-icon.png" },
+  formatDetection: { telephone: false },
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#D1C9B6" };
+export const viewport: Viewport = {
+  width: "device-width", initialScale: 1, viewportFit: "cover",
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#D1C9B6" }, { media: "(prefers-color-scheme: dark)", color: "#2A2622" }],
+};
 
 // Aplica o tema salvo antes da primeira pintura, sem piscar.
 const temaInicial = `try{var t=localStorage.getItem('cmc-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}`;

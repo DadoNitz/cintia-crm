@@ -6,6 +6,7 @@ import { Avatar, Vazio } from "@/components/bits";
 import { hora } from "@/lib/fmt";
 import { agoraClinica, amanha, useCRM } from "@/lib/store";
 import type { Fluxo, Lead } from "@/lib/types";
+import { useCelular } from "@/lib/pwa";
 import { rectDe, useUI } from "@/lib/ui";
 
 export const hojeInicio = () => { const x = new Date(); x.setHours(0, 0, 0, 0); return x.getTime(); };
@@ -77,6 +78,8 @@ export function FluxoHoje() {
   const agora = useRelogio();
   const doDia = consultasDoDia(leads).filter((l) => l.fluxo !== "faltou");
   const faltas = consultasDoDia(leads).filter((l) => l.fluxo === "faltou").length;
+  const celular = useCelular();
+  const [aba, setAba] = useState<Fluxo>("recepcao");
   return (
     <section className="panel p-4 min-w-0">
       <div className="flex items-center gap-3 mb-3 px-1">
@@ -84,14 +87,29 @@ export function FluxoHoje() {
         {faltas > 0 && <span className="chip">{faltas} falta{faltas > 1 ? "s" : ""}</span>}
         <span className="text-[12px] num" style={{ color: "var(--muted)" }}>{doDia.length} consultas</span>
       </div>
-      <LayoutGroup id="fluxo">
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-2.5">
+      {/* Celular: uma coluna por vez, escolhida nas abas; o card ainda "voa" para a aba certa ao avançar */}
+      {celular && (
+        <div className="grid grid-cols-4 gap-1 p-1 rounded-xl mb-2.5" style={{ background: "var(--surface-2)" }} role="tablist">
           {COLUNAS.map((c) => {
+            const n = doDia.filter((l) => (l.fluxo ?? "esperada") === c.id).length;
+            return (
+              <button key={c.id} type="button" role="tab" aria-selected={aba === c.id} onClick={() => setAba(c.id)} className="relative rounded-lg py-1.5 text-[11.5px] leading-tight cursor-pointer" style={{ color: aba === c.id ? "var(--ink)" : "var(--muted)" }}>
+                {aba === c.id && <motion.span layoutId="fluxo-aba" className="absolute inset-0 rounded-lg" style={{ background: "var(--surface)", boxShadow: "var(--shadow)" }} transition={{ type: "spring", stiffness: 500, damping: 38 }} />}
+                <span className="relative block display num text-[18px] leading-none">{n}</span>
+                <span className="relative">{c.nome.replace("Na ", "").replace("Em ", "")}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+      <LayoutGroup id="fluxo">
+        <div className={celular ? "flex flex-col" : "grid grid-cols-2 xl:grid-cols-4 gap-2.5"}>
+          {COLUNAS.filter((c) => !celular || c.id === aba).map((c) => {
             const cards = doDia.filter((l) => (l.fluxo ?? "esperada") === c.id);
             const visiveis = c.id === "atendida" ? cards.slice(-4) : cards;
             return (
-              <div key={c.id} className="rounded-[14px] p-2 flex flex-col gap-2 min-h-[160px] min-w-0" style={{ background: "var(--surface-2)" }}>
-                <div className="flex items-center justify-between px-1 pt-0.5">
+              <div key={c.id} className={`rounded-[14px] flex flex-col gap-2 min-w-0 ${celular ? "" : "p-2 min-h-[160px]"}`} style={{ background: celular ? "transparent" : "var(--surface-2)" }}>
+                <div className={`flex items-center justify-between px-1 pt-0.5 ${celular ? "hidden" : ""}`}>
                   <span className="text-[12px] font-medium">{c.nome}</span>
                   <motion.span key={cards.length} initial={{ scale: 1.4 }} animate={{ scale: 1 }} className="num text-[11.5px] px-1.5 rounded-full" style={{ background: "var(--surface)", color: "var(--muted)" }}>{cards.length}</motion.span>
                 </div>

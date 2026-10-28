@@ -145,7 +145,7 @@ export function Relatorios() {
       </Cabecalho>
       <p className="text-[12.5px] -mt-3 mb-0 flex items-center gap-1.5" style={{ color: "var(--muted)" }}><Info size={13} />Agenda e faltas com números de exemplo. O funil de vendas e os interesses usam os dados do CRM.</p>
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="kpi-row grid grid-cols-2 xl:grid-cols-4 gap-3">
         {kpis.map((k, i) => (
           <motion.div key={k.l} className="panel p-4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
             <div className="eyebrow">{k.l}</div>

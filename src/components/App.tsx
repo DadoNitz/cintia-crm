@@ -6,6 +6,8 @@ import { Avatar, EtapaPill } from "@/components/bits";
 import { Ficha } from "@/components/Ficha";
 import { BotaoTema, Marca, Sidebar } from "@/components/Sidebar";
 import { CRMProvider, useCRM } from "@/lib/store";
+import { registrarSW } from "@/lib/pwa";
+import { Loader } from "@/components/Loader";
 import { UICtx, VIEWS, rectDe, useUI, type Rect, type View } from "@/lib/ui";
 import { Agenda } from "@/views/Agenda";
 import { Campanhas } from "@/views/Campanhas";
@@ -63,6 +65,14 @@ function Shell() {
   const [ficha, setFicha] = useState<{ id: string; origem: Rect | null; foco?: "nome" } | null>(null);
   const [conversaId, setConversaId] = useState<string | null>(null);
 
+  useEffect(registrarSW, []);
+  // Segura o loader até as fontes chegarem e a animação de entrada terminar (mínimo ~1,4 s desde o início da página)
+  const [pronto, setPronto] = useState(false);
+  useEffect(() => {
+    let vivo = true;
+    Promise.all([document.fonts?.ready, new Promise((r) => setTimeout(r, Math.max(0, 1400 - performance.now())))]).then(() => vivo && setPronto(true));
+    return () => { vivo = false; };
+  }, []);
   useEffect(() => {
     const h = () => setView(lerHash());
     window.addEventListener("hashchange", h); return () => window.removeEventListener("hashchange", h);
@@ -101,6 +111,13 @@ function Shell() {
           </main>
         </div>
       </div>
+      <AnimatePresence>
+        {!pronto && (
+          <motion.div key="loader" className="fixed inset-0 z-[100]" exit={{ opacity: 0, scale: 1.04, filter: "blur(4px)" }} transition={{ duration: 0.45, ease: [0.2, 0.8, 0.2, 1] }}>
+            <Loader continua />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {ficha && <Ficha key={ficha.id} id={ficha.id} origem={ficha.origem} foco={ficha.foco} onClose={() => setFicha(null)} />}
       </AnimatePresence>

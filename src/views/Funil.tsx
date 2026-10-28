@@ -8,6 +8,8 @@ import { brl, data, dias, hora, parado, quando } from "@/lib/fmt";
 import { useCRM } from "@/lib/store";
 import { ETAPAS, INTERESSES, etapa, type EtapaId, type Lead } from "@/lib/types";
 import { rectDe, useUI } from "@/lib/ui";
+import { useCelular } from "@/lib/pwa";
+import { FunilCelular } from "./FunilCelular";
 
 type Drag = { id: string; w: number; h: number; ox: number; oy: number };
 type Pouso = { id: string; left: number; top: number; rotate: number; n: number };
@@ -95,7 +97,7 @@ function Fantasma({ l, x, y, w }: { l: Lead; x: MotionValue<number>; y: MotionVa
 }
 let fantasmaRot: MotionValue<number> | null = null;
 
-export function Funil() {
+function FunilDesktop() {
   const { leads, mover } = useCRM();
   const { abrirFicha } = useUI();
   const [q, setQ] = useState("");
@@ -227,4 +229,8 @@ export function Funil() {
       {arrastado && drag && <Fantasma l={arrastado} x={x} y={y} w={drag.w} />}
     </div>
   );
+}
+
+export function Funil() {
+  return useCelular() ? <FunilCelular /> : <FunilDesktop />;
 }

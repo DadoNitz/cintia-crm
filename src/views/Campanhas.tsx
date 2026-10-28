@@ -261,7 +261,7 @@ export function Campanhas() {
         <button type="button" className="btn" onClick={() => setNovoModelo(true)}><FilePlus2 size={15} />Novo modelo</button>
         <button type="button" className="btn btn-gold" onClick={() => setEditando(vazio())}><Megaphone size={15} />Nova campanha</button>
       </Cabecalho>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div className="kpi-row grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         {kpis.map((k) => <div key={k.l} className="panel p-4"><div className="eyebrow">{k.l}</div><div className="display text-[34px] leading-none mt-2 num">{k.v}</div></div>)}
       </div>
       <div className="mb-4"><Seg id="camp-aba" value={aba} onChange={setAba} opcoes={[{ v: "disparos", label: `Disparos · ${campanhas.length}` }, { v: "modelos", label: `Modelos · ${modelos.length}` }]} /></div>

@@ -61,7 +61,7 @@ export function Ficha({ id, origem, foco, onClose }: { id: string; origem: Rect 
   const semTag = tags.filter((t) => !l.tags.includes(t.nome));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-stretch md:items-center justify-center md:p-6" role="dialog" aria-modal="true" aria-label={`Ficha de ${l.nome || "paciente"}`}>
+    <div className="fixed inset-0 z-[60] flex items-stretch md:items-center justify-center md:p-6" role="dialog" aria-modal="true" aria-label={`Ficha de ${l.nome || "paciente"}`}>
       <motion.div className="absolute inset-0" style={{ background: "rgb(20 14 8 / .42)", backdropFilter: "blur(3px)" }}
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={fechar} />
       <motion.div ref={painel}
@@ -75,7 +75,7 @@ export function Ficha({ id, origem, foco, onClose }: { id: string; origem: Rect 
         {/* Cabeçalho */}
         <div className="flex flex-wrap items-center gap-3 px-5 py-4" style={{ borderBottom: "1px solid var(--line)", paddingTop: "max(16px, env(safe-area-inset-top))" }}>
           <Avatar nome={nome || l.nome} size={46} />
-          <div className="flex-1 min-w-[180px]">
+          <div className="flex-1 min-w-[180px] pr-12 md:pr-0">
             <input id="ficha-nome" autoFocus={foco === "nome"} className="display text-[28px] leading-tight bg-transparent border-0 w-full p-0 focus:outline-none"
               value={nome} placeholder="Nome da paciente" onChange={(e) => setNome(e.target.value)} onBlur={salvarNome} onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()} aria-label="Nome" />
             <div className="text-[12.5px] flex flex-wrap gap-x-3" style={{ color: "var(--muted)" }}>
@@ -85,7 +85,7 @@ export function Ficha({ id, origem, foco, onClose }: { id: string; origem: Rect 
           </div>
           <EtapaSelect id="ficha-etapa" value={l.etapa} onChange={(v) => mover(l.id, v)} />
           <button type="button" className="btn" onClick={() => { salvarNome(); abrirConversa(l.id); }}><MessageCircle size={15} />Conversa</button>
-          <button type="button" className="icon-btn" onClick={fechar} aria-label="Fechar ficha"><X size={17} /></button>
+          <button type="button" className="icon-btn absolute md:static right-4 top-[max(16px,env(safe-area-inset-top))]" onClick={fechar} aria-label="Fechar ficha"><X size={17} /></button>
         </div>
 
         <div className="flex-1 min-h-0 grid md:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] overflow-y-auto md:overflow-hidden">

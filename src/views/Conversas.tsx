@@ -1,12 +1,14 @@
 "use client";
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, ArrowLeft, CheckCircle2, IdCard, MessageCircle, RotateCcw, Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { AlertTriangle, ArrowLeft, CheckCircle2, ChevronDown, IdCard, MessageCircle, MoreHorizontal, RotateCcw, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { useMq } from "@/lib/pwa";
 import { Avatar, EtapaSelect, TagChip } from "@/components/bits";
 import { ChatThread } from "@/components/Chat";
 import { aguardandoClinica, quandoMsg, ultimaMsg } from "@/lib/fmt";
 import { useCRM } from "@/lib/store";
-import { CATEGORIAS, EQUIPE, EU, etapa, type Categoria, type Lead } from "@/lib/types";
+import { CATEGORIAS, EQUIPE, ETAPAS, EU, etapa, type Categoria, type Lead } from "@/lib/types";
 import { rectDe, useUI } from "@/lib/ui";
 
 type Filtro = "todas" | "naolidas" | "minhas" | "sem" | "resolvidas";
@@ -45,6 +47,64 @@ function Item({ l, ativo, onClick }: { l: Lead; ativo: boolean; onClick: () => v
   );
 }
 
+// Celular: a conversa abre em tela cheia por cima de tudo, como no WhatsApp.
+// O botão voltar do Android fecha a conversa (empurramos uma entrada no histórico ao abrir).
+function ConversaCelular({ l, onVoltar }: { l: Lead; onVoltar: () => void }) {
+  const { mover, update } = useCRM();
+  const { abrirFicha } = useUI();
+  const [detalhes, setDetalhes] = useState(false);
+  useEffect(() => {
+    history.pushState({ conversa: l.id }, "");
+    const pop = () => onVoltar();
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
+  }, [l.id, onVoltar]);
+  return (
+    <motion.div className="fixed inset-0 z-[55] flex flex-col" style={{ background: "var(--surface)", paddingTop: "env(safe-area-inset-top, 0px)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}
+      initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 420, damping: 40 }}
+      role="dialog" aria-label={`Conversa com ${l.nome}`}>
+      <div className="flex items-center gap-2 px-2 py-2" style={{ borderBottom: "1px solid var(--line)" }}>
+        <button type="button" className="w-10 h-10 grid place-items-center cursor-pointer" onClick={() => history.back()} aria-label="Voltar"><ArrowLeft size={20} /></button>
+        <Avatar nome={l.nome} size={36} />
+        <div className="flex-1 min-w-0">
+          <div className="font-medium truncate leading-tight">{l.nome}</div>
+          <label className="relative inline-flex items-center gap-1 text-[12px]" style={{ color: "var(--muted)" }}>
+            <span className="dot" style={{ background: etapa(l.etapa).cor }} />{etapa(l.etapa).nome}<ChevronDown size={12} />
+            <select className="absolute inset-0 opacity-0" value={l.etapa} onChange={(e) => mover(l.id, e.target.value as Lead["etapa"])} aria-label="Etapa do funil">
+              {ETAPAS.map((e) => <option key={e.id} value={e.id}>{e.nome}</option>)}
+            </select>
+          </label>
+        </div>
+        <button type="button" className="w-10 h-10 grid place-items-center cursor-pointer" onClick={(e) => abrirFicha(l.id, rectDe(e.currentTarget))} aria-label="Abrir ficha"><IdCard size={19} /></button>
+        <button type="button" className="w-10 h-10 grid place-items-center cursor-pointer" aria-expanded={detalhes} onClick={() => setDetalhes((v) => !v)} aria-label="Mais opções"><MoreHorizontal size={20} /></button>
+      </div>
+      <AnimatePresence initial={false}>
+        {detalhes && (
+          <motion.div initial={{ height: 0 }} animate={{ height: "auto" }} exit={{ height: 0 }} className="overflow-hidden" style={{ borderBottom: "1px solid var(--line)", background: "var(--surface-2)" }}>
+            <div className="grid grid-cols-2 gap-2 p-3">
+              <label className="text-[12px]" style={{ color: "var(--muted)" }}>Responsável
+                <select className="field mt-1" value={l.responsavel ?? ""} onChange={(e) => update(l.id, { responsavel: e.target.value || null })}>
+                  <option value="">Ninguém</option>{EQUIPE.map((e) => <option key={e.id} value={e.id}>{e.nome}</option>)}
+                </select>
+              </label>
+              <label className="text-[12px]" style={{ color: "var(--muted)" }}>Assunto
+                <select className="field mt-1" value={l.categoria ?? ""} onChange={(e) => update(l.id, { categoria: (e.target.value || null) as Categoria | null })}>
+                  <option value="">Sem assunto</option>{CATEGORIAS.map((c) => <option key={c}>{c}</option>)}
+                </select>
+              </label>
+              <button type="button" aria-pressed={l.urgente} onClick={() => update(l.id, { urgente: !l.urgente })} className={`btn justify-center ${l.urgente ? "!border-[var(--bad)]" : ""}`} style={l.urgente ? { color: "var(--bad)" } : undefined}><AlertTriangle size={15} />{l.urgente ? "Urgente" : "Marcar urgente"}</button>
+              <button type="button" className="btn justify-center" onClick={() => { update(l.id, { resolvida: !l.resolvida, naoLidas: 0 }); if (!l.resolvida) history.back(); }}>
+                {l.resolvida ? <><RotateCcw size={15} />Reabrir</> : <><CheckCircle2 size={15} style={{ color: "var(--ok)" }} />Resolver</>}
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="flex-1 min-h-0"><ChatThread key={l.id} l={l} /></div>
+    </motion.div>
+  );
+}
+
 export function Conversas() {
   const { leads, mover, update } = useCRM();
   const { conversaId, setConversaId, abrirFicha } = useUI();
@@ -65,6 +125,8 @@ export function Conversas() {
   [leads, q, filtro, conversaId]);
 
   const atual = leads.find((l) => l.id === conversaId) ?? null;
+  const celular = useMq("(max-width: 1023px)");
+  const voltar = useMemo(() => () => setConversaId(null), [setConversaId]);
   const aguardando = abertas.filter(aguardandoClinica).length;
   const FILTROS: { v: Filtro; l: string }[] = [
     { v: "todas", l: "Abertas" }, { v: "naolidas", l: "Não lidas" }, { v: "minhas", l: "Minhas" }, { v: "sem", l: "Sem dono" }, { v: "resolvidas", l: "Resolvidas" },
@@ -78,9 +140,9 @@ export function Conversas() {
           <div key={l as string} className="panel !rounded-xl px-3.5 py-2 text-center min-w-[96px]"><div className="display text-[22px] leading-none num">{v}</div><div className="text-[11px] mt-0.5" style={{ color: "var(--muted)" }}>{l}</div></div>
         ))}
       </div>
-      <div className="panel !rounded-[20px] overflow-hidden flex h-[calc(100dvh-170px)] md:h-[calc(100dvh-200px)] min-h-[520px]">
+      <div className="panel !rounded-[20px] overflow-hidden flex h-[calc(100dvh-150px-env(safe-area-inset-bottom,0px))] md:h-[calc(100dvh-200px)] min-h-[420px]">
         {/* Lista */}
-        <div className={`${atual ? "hidden lg:flex" : "flex"} flex-col w-full lg:w-[370px] flex-none`} style={{ borderRight: "1px solid var(--line)" }}>
+        <div className={`${atual && !celular ? "hidden lg:flex" : "flex"} flex-col w-full lg:w-[370px] flex-none`} style={{ borderRight: "1px solid var(--line)" }}>
           <div className="p-3.5 flex flex-col gap-2.5" style={{ borderBottom: "1px solid var(--line)" }}>
             <h1 className="md:hidden display text-[26px] m-0">Conversas</h1>
             <label className="relative">
@@ -106,7 +168,7 @@ export function Conversas() {
         </div>
 
         {/* Conversa aberta */}
-        <div className={`${atual ? "flex" : "hidden lg:flex"} flex-1 min-w-0 flex-col`}>
+        {!celular && <div className="hidden lg:flex flex-1 min-w-0 flex-col">
           {atual ? (
             <>
               <div className="flex flex-wrap items-center gap-2.5 px-4 py-3" style={{ borderBottom: "1px solid var(--line)" }}>
@@ -147,8 +209,9 @@ export function Conversas() {
               <p className="text-[13px] mt-1" style={{ color: "var(--muted)" }}>As respostas saem do WhatsApp da clínica, e a equipe vê a mesma caixa. Digite / para usar um modelo, ou use as sugestões da IA.</p>
             </div>
           )}
-        </div>
+        </div>}
       </div>
+      {celular && createPortal(<AnimatePresence>{atual && <ConversaCelular key={atual.id} l={atual} onVoltar={voltar} />}</AnimatePresence>, document.body)}
     </div>
   );
 }

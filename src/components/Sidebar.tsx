@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { BarChart3, CalendarDays, ClipboardCheck, Columns3, LayoutDashboard, Megaphone, MessageCircle, Moon, MoreHorizontal, Settings2, Sun, Users } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { useCRM } from "@/lib/store";
+import { LogoMarca, LogoTexto } from "@/components/Logo";
 import { useUI, type View } from "@/lib/ui";
 import { temaAtual, trocarTema, type Tema } from "@/lib/liquid";
 
@@ -24,17 +25,9 @@ const mola = { type: "spring" as const, stiffness: 420, damping: 34 };
 
 export function Marca({ compacta = false }: { compacta?: boolean }) {
   return (
-    <div className="flex items-center gap-3">
-      <svg viewBox="0 0 40 40" className="w-9 h-9 flex-none" aria-hidden>
-        <circle cx="20" cy="20" r="18.5" fill="none" stroke="var(--side-mark)" strokeWidth="1.2" />
-        <path d="M22.5 11a8.5 8.5 0 1 0 0 17h3.5V18.5" fill="none" stroke="var(--side-mark)" strokeWidth="1.7" strokeLinecap="round" />
-      </svg>
-      {!compacta && (
-        <div className="leading-none">
-          <div style={{ letterSpacing: ".2em", fontSize: 13, color: "var(--side-mark)" }}>CINTIA MACHADO</div>
-          <div style={{ letterSpacing: ".62em", fontSize: 8.5, color: "var(--side-mark)", marginTop: 5, fontWeight: 500 }}>CLINIC</div>
-        </div>
-      )}
+    <div className="flex items-center gap-3" style={{ color: "var(--side-mark)" }}>
+      <LogoMarca size={compacta ? 30 : 40} className="flex-none" />
+      {!compacta && <LogoTexto width={150} />}
     </div>
   );
 }

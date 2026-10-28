@@ -3,6 +3,7 @@ import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { AlertCircle, ArrowUpRight, MessageCircle, Stethoscope } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Avatar, Seg, Vazio } from "@/components/bits";
+import { AvisoInstalar } from "@/lib/pwa";
 import { FluxoHoje, LembretesAmanha, WhatsAppAguardando, consultasDoDia, useRelogio } from "@/components/Hoje";
 import { aguardandoClinica, brl, dataLonga, dias, parado } from "@/lib/fmt";
 import { useCRM } from "@/lib/store";
@@ -59,6 +60,7 @@ export function Painel() {
 
   return (
     <div className="flex flex-col gap-5">
+      <AvisoInstalar />
       <div className="flex flex-wrap items-end gap-4">
         <div className="flex-1 min-w-[240px]">
           <div className="eyebrow mb-1">{dataLonga(Date.now())}</div>
@@ -70,7 +72,7 @@ export function Painel() {
         <Seg id="periodo" value={per} onChange={setPer} opcoes={[{ v: "7", label: "7 dias" }, { v: "30", label: "30 dias" }, { v: "90", label: "90 dias" }]} />
       </div>
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="kpi-row grid grid-cols-2 xl:grid-cols-4 gap-3">
         {kpis.map((k, i) => (
           <motion.button type="button" key={k.l} onClick={k.acao} disabled={!k.acao}
             initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 26 }}

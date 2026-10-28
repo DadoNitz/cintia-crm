@@ -43,7 +43,7 @@ export function Agenda() {
       <Cabecalho eyebrow="Agenda da Dra. Cintia" titulo="Agenda">
         <button type="button" className="btn btn-gold" onClick={novoContato}><CalendarPlus size={15} />Nova consulta</button>
       </Cabecalho>
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
+      <div className="kpi-row grid grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
         {kpis.map((k) => <div key={k.l} className="panel p-4"><div className="eyebrow">{k.l}</div><div className="display text-[32px] leading-none mt-2 num">{k.v}</div></div>)}
       </div>
 

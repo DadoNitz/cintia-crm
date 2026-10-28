@@ -93,3 +93,36 @@ input, select, textarea { font: inherit; color: var(--ink); }
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ---------- Celular ---------- */
+@media (max-width: 767px) {
+  /* 16px nos campos: abaixo disso o iPhone dá zoom ao tocar */
+  input, select, textarea { font-size: 16px !important; }
+  /* Linha de números vira carrossel com encaixe */
+  .kpi-row { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: -16px; padding-inline: 16px; scroll-padding-inline: 16px; scrollbar-width: none; gap: 10px !important; }
+  .kpi-row::-webkit-scrollbar { display: none; }
+  .kpi-row > * { flex: 0 0 min(44%, 168px); scroll-snap-align: start; padding: 12px 14px !important; }
+  .kpi-row .display { font-size: 30px !important; }
+  .kpi-row .eyebrow { font-size: 10px; letter-spacing: .1em; }
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
+html { -webkit-tap-highlight-color: transparent; }
+body { overscroll-behavior-y: none; }
+@media (display-mode: standalone) { body { -webkit-user-select: none; user-select: none; } input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; } }
+
+/* ---------- Loader ---------- */
+.loader { position: fixed; inset: 0; z-index: 100; display: grid; place-content: center; justify-items: center; gap: 22px; background: var(--bg); color: var(--gold); }
+.loader-marca { position: relative; animation: loader-marca 1.1s cubic-bezier(.2,.8,.2,1) both; }
+/* anel que pulsa atrás da marca */
+.loader-marca::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--gold) 45%, transparent); animation: loader-anel 1.8s 1s ease-out infinite; opacity: 0; }
+.loader-texto { animation: loader-texto .9s .4s cubic-bezier(.2,.8,.2,1) both; }
+.loader-barra { width: 140px; height: 2px; border-radius: 2px; background: var(--line); overflow: hidden; animation: loader-fade .4s .7s both; }
+.loader-barra span { display: block; width: 40%; height: 100%; border-radius: 2px; background: var(--gold); animation: loader-barra 1.1s .7s ease-in-out infinite; }
+.loader-continua .loader-marca, .loader-continua .loader-texto, .loader-continua .loader-barra { animation: none; }
+.loader-continua .loader-marca::after { animation-delay: 0s; }
+@keyframes loader-marca { from { clip-path: circle(0% at 50% 50%); transform: rotate(-35deg) scale(.92); } to { clip-path: circle(75% at 50% 50%); transform: none; } }
+@keyframes loader-texto { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes loader-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes loader-barra { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
+@keyframes loader-anel { from { opacity: .9; transform: scale(.92); } to { opacity: 0; transform: scale(1.25); } }

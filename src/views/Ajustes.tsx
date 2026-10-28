@@ -4,6 +4,7 @@ import { BellRing, Bot, Building2, Columns3, Database, Download, MessageSquareRe
 import { useEffect, useState } from "react";
 import { Avatar, Cabecalho, TagChip } from "@/components/bits";
 import { BotaoTema } from "@/components/Sidebar";
+import { useInstalar } from "@/lib/pwa";
 import { preencher, useCRM } from "@/lib/store";
 import { EQUIPE, ETAPAS, OPTIN_NOME, etapa, type Config } from "@/lib/types";
 
@@ -66,6 +67,7 @@ export function Ajustes() {
   const { leads, tags, config, setConfig, resetar } = useCRM();
   const [secao, setSecao] = useState<Secao>("clinica");
   const [confirmar, setConfirmar] = useState(false);
+  const pwa = useInstalar();
   const set = (c: Partial<Config>) => setConfig(c);
   const optin = { sim: leads.filter((l) => l.optin === "sim").length, pendente: leads.filter((l) => l.optin === "pendente").length, nao: leads.filter((l) => l.optin === "nao").length };
   const exemplo = { nome: "Camila Weber", interesse: "Emagrecimento", consulta: new Date().setHours(14, 0, 0, 0) };
@@ -164,9 +166,17 @@ export function Ajustes() {
       </Bloco>
     ),
     aparencia: (
-      <Bloco titulo="Aparência" desc="Tema claro ou escuro, salvo neste navegador.">
-        <div><BotaoTema claro /></div>
-      </Bloco>
+      <>
+        <Bloco titulo="Aparência" desc="Tema claro ou escuro, salvo neste navegador.">
+          <div><BotaoTema claro /></div>
+        </Bloco>
+        <Bloco titulo="App no celular e no computador" desc="O CRM pode ser instalado como app: abre em tela cheia, ganha ícone e funciona sem internet.">
+          {pwa.instalado ? <span className="tag tag-salvia self-start">Instalado neste aparelho</span>
+            : pwa.pode ? <button type="button" className="btn btn-gold self-start" onClick={pwa.instalar}><Download size={15} />Instalar o app</button>
+            : pwa.ios ? <p className="text-[13px] m-0">No iPhone: toque em Compartilhar e depois em “Adicionar à Tela de Início”.</p>
+            : <p className="text-[13px] m-0" style={{ color: "var(--muted)" }}>No Chrome ou Edge, use o ícone de instalar na barra de endereço. No iPhone, Compartilhar → “Adicionar à Tela de Início”.</p>}
+        </Bloco>
+      </>
     ),
     dados: (
       <Bloco titulo="Dados" desc="Versão de demonstração: os dados ficam salvos só neste navegador.">

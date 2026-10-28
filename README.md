@@ -58,3 +58,12 @@ Next.js 16 (App Router), React 19, Tailwind CSS 4, Motion (animações), lucide-
 | `src/lib/liquid.ts` | Transição de tema "líquida" (View Transitions API) |
 | `src/views/Funil.tsx` | Kanban com física no arrastar |
 | `src/components/Ficha.tsx` | Ficha da paciente |
+
+## App no celular (PWA)
+
+- `src/app/manifest.ts`: nome, ícones (gerados a partir do logo vetorizado), tela cheia, atalhos.
+- `public/sw.js`: service worker. Páginas com rede primeiro e cache como reserva (abre offline); arquivos do build com cache primeiro; `/api` nunca é guardado.
+- Instalar: no Android aparece o botão (evento `beforeinstallprompt`); no iPhone, Compartilhar → "Adicionar à Tela de Início".
+- No celular o layout muda: funil por abas com deslizar o card para mudar de etapa, conversa em tela cheia (o voltar do Android fecha), pacientes em cards, fluxo do dia por abas, números em carrossel.
+- `src/components/Logo.tsx`: logo da clínica em SVG, vetorizado da arte original.
+- `src/components/Loader.tsx`: tela de carregamento, vem no HTML do servidor.
