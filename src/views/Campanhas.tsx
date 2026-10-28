@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { CalendarClock, FilePlus2, Megaphone, Pencil, Send, ShieldCheck, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Cabecalho, Seg, Vazio } from "@/components/bits";
 import { data, hora } from "@/lib/fmt";
 import { destinatarios, preencher, useCRM } from "@/lib/store";
@@ -285,10 +286,14 @@ export function Campanhas() {
           </motion.div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
-        {editando && <Editor key="ed" inicial={editando} onClose={() => setEditando(null)} />}
-        {novoModelo && <EditorModelo key="mod" onClose={() => setNovoModelo(false)} />}
-      </AnimatePresence>
+      {/* No body: a transição de página usa transform/filter, que prendem position:fixed dentro dela */}
+      {createPortal(
+        <AnimatePresence>
+          {editando && <Editor key="ed" inicial={editando} onClose={() => setEditando(null)} />}
+          {novoModelo && <EditorModelo key="mod" onClose={() => setNovoModelo(false)} />}
+        </AnimatePresence>,
+        document.body,
+      )}
     </div>
   );
 }
