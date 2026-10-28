@@ -1,6 +1,6 @@
 "use client";
-import { motion } from "motion/react";
-import { CalendarDays, ClipboardCheck, Columns3, LayoutDashboard, MessageCircle, Moon, Settings2, Sun, Users } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { BarChart3, CalendarDays, ClipboardCheck, Columns3, LayoutDashboard, Megaphone, MessageCircle, Moon, MoreHorizontal, Settings2, Sun, Users } from "lucide-react";
 import { useEffect, useState, type ComponentType } from "react";
 import { useCRM } from "@/lib/store";
 import { useUI, type View } from "@/lib/ui";
@@ -13,9 +13,12 @@ const ITENS: Item[] = [
   { id: "conversas", nome: "Conversas", curto: "Chat", Icon: MessageCircle },
   { id: "pacientes", nome: "Pacientes", curto: "Pacientes", Icon: Users },
   { id: "agenda", nome: "Agenda", curto: "Agenda", Icon: CalendarDays },
+  { id: "campanhas", nome: "Campanhas", curto: "Campanhas", Icon: Megaphone },
+  { id: "relatorios", nome: "Relatórios", curto: "Relatórios", Icon: BarChart3 },
   { id: "pendencias", nome: "Pendências da Dra", curto: "Dra", Icon: ClipboardCheck },
   { id: "ajustes", nome: "Ajustes", curto: "Ajustes", Icon: Settings2 },
 ];
+const NO_CELULAR: View[] = ["painel", "funil", "conversas", "agenda"];
 
 const mola = { type: "spring" as const, stiffness: 420, damping: 34 };
 
@@ -62,6 +65,7 @@ export function BotaoTema({ claro = false }: { claro?: boolean }) {
 
 export function Sidebar() {
   const { view, ir } = useUI();
+  const [mais, setMais] = useState(false);
   const { leads } = useCRM();
   const contagem: Partial<Record<View, number>> = {
     conversas: leads.filter((l) => l.naoLidas > 0).length,
@@ -71,14 +75,14 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop */}
-      <aside className="hidden md:flex flex-col w-[248px] flex-none h-full px-4 py-5 gap-6" style={{ background: "var(--side)", color: "var(--side-ink)" }}>
+      <aside className="hidden md:flex flex-col w-[248px] flex-none h-full px-4 py-5 gap-5 overflow-y-auto scroll-thin" style={{ background: "var(--side)", color: "var(--side-ink)" }}>
         <div className="px-2"><Marca /></div>
         <nav className="flex flex-col gap-1" aria-label="Seções">
           {ITENS.map(({ id, nome, Icon }) => {
             const ativo = view === id;
             return (
               <button key={id} type="button" onClick={() => ir(id)} aria-current={ativo ? "page" : undefined}
-                className="relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-left cursor-pointer"
+                className="relative flex items-center gap-3 rounded-xl px-3 py-2 text-left cursor-pointer"
                 style={{ color: ativo ? "var(--side-ink)" : "var(--side-muted)" }}>
                 {ativo && <motion.span layoutId="pill" transition={mola} className="absolute inset-0 rounded-xl" style={{ background: "var(--side-pill)", boxShadow: "var(--shadow)" }} />}
                 {ativo && <motion.span layoutId="pill-bar" transition={mola} className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full" style={{ background: "var(--gold)" }} />}
@@ -109,19 +113,41 @@ export function Sidebar() {
         </div>
       </aside>
 
-      {/* Celular */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 flex justify-around"
+      {/* Celular: 4 atalhos + "Mais" abre o resto numa folha que sobe de baixo */}
+      <AnimatePresence>
+        {mais && (
+          <>
+            <motion.div className="md:hidden fixed inset-0 z-40" style={{ background: "rgb(20 14 8 / .35)" }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setMais(false)} />
+            <motion.div className="md:hidden fixed inset-x-0 bottom-0 z-50 rounded-t-[22px] p-4 pt-3 grid grid-cols-3 gap-2"
+              style={{ background: "var(--side)", paddingBottom: "calc(76px + env(safe-area-inset-bottom, 0px))" }}
+              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 380, damping: 36 }}>
+              <div className="col-span-3 mx-auto w-10 h-1 rounded-full mb-2" style={{ background: "var(--side-line)" }} />
+              {ITENS.filter((i) => !NO_CELULAR.includes(i.id)).map(({ id, nome, Icon }) => (
+                <button key={id} type="button" onClick={() => { ir(id); setMais(false); }}
+                  className="relative flex flex-col items-center gap-1.5 rounded-xl py-3 text-[12px] cursor-pointer"
+                  style={{ background: view === id ? "var(--side-pill)" : "transparent", color: "var(--side-ink)" }}>
+                  <Icon size={20} />{nome}
+                  {!!contagem[id] && <span className="absolute top-2 right-3 badge">{contagem[id]}</span>}
+                </button>
+              ))}
+              <div className="col-span-3 flex justify-center pt-1"><BotaoTema /></div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 flex justify-around"
         style={{ background: "var(--side)", paddingBottom: "env(safe-area-inset-bottom, 0px)", paddingLeft: "env(safe-area-inset-left,0px)", paddingRight: "env(safe-area-inset-right,0px)" }}
         aria-label="Seções">
-        {ITENS.map(({ id, curto, Icon }) => {
-          const ativo = view === id;
+        {[...ITENS.filter((i) => NO_CELULAR.includes(i.id)), { id: "mais" as const, curto: "Mais", nome: "Mais", Icon: MoreHorizontal }].map(({ id, curto, Icon }) => {
+          const ativo = id === "mais" ? mais || !NO_CELULAR.includes(view) : view === id && !mais;
+          const n = id === "mais" ? (contagem.pendencias ?? 0) : contagem[id as View];
           return (
-            <button key={id} type="button" onClick={() => ir(id)} aria-current={ativo ? "page" : undefined}
-              className="relative flex-1 flex flex-col items-center gap-0.5 py-2 cursor-pointer text-[10px]"
+            <button key={id} type="button" onClick={() => id === "mais" ? setMais((v) => !v) : (ir(id as View), setMais(false))} aria-current={ativo ? "page" : undefined}
+              className="relative flex-1 flex flex-col items-center gap-0.5 py-2 cursor-pointer text-[10.5px]"
               style={{ color: ativo ? "var(--side-ink)" : "var(--side-muted)" }}>
-              {ativo && <motion.span layoutId="pill-m" transition={mola} className="absolute inset-x-1 inset-y-1 rounded-xl" style={{ background: "var(--side-pill)" }} />}
+              {ativo && <motion.span layoutId="pill-m" transition={mola} className="absolute inset-x-1.5 inset-y-1 rounded-xl" style={{ background: "var(--side-pill)" }} />}
               <span className="relative"><Icon size={19} strokeWidth={ativo ? 2 : 1.6} />
-                {!!contagem[id] && <span className="absolute -top-1.5 -right-2.5 badge" style={{ minWidth: 15, height: 15, fontSize: 9.5 }}>{contagem[id]}</span>}
+                {!!n && <span className="absolute -top-1.5 -right-2.5 badge" style={{ minWidth: 15, height: 15, fontSize: 9.5 }}>{n}</span>}
               </span>
               <span className="relative">{curto}</span>
             </button>

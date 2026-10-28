@@ -1,8 +1,8 @@
 "use client";
 import { createContext, useContext } from "react";
 
-export type View = "painel" | "funil" | "conversas" | "pacientes" | "agenda" | "pendencias" | "ajustes";
-export const VIEWS: View[] = ["painel", "funil", "conversas", "pacientes", "agenda", "pendencias", "ajustes"];
+export type View = "painel" | "funil" | "conversas" | "pacientes" | "agenda" | "campanhas" | "relatorios" | "pendencias" | "ajustes";
+export const VIEWS: View[] = ["painel", "funil", "conversas", "pacientes", "agenda", "campanhas", "relatorios", "pendencias", "ajustes"];
 
 export type Rect = { left: number; top: number; width: number; height: number };
 type UI = {

@@ -6,7 +6,7 @@ import { Avatar, EtapaSelect, Seg, TagChip } from "@/components/bits";
 import { ChatThread } from "@/components/Chat";
 import { brl, data, hora, quando } from "@/lib/fmt";
 import { useCRM } from "@/lib/store";
-import { INTERESSES, ORIGENS, TAG_CORES, type Evento, type Lead, type TagCor } from "@/lib/types";
+import { INTERESSES, OPTIN_NOME, ORIGENS, TAG_CORES, TIPOS, type Optin, type TipoConsulta, type Evento, type Lead, type TagCor } from "@/lib/types";
 import type { Rect } from "@/lib/ui";
 import { useUI } from "@/lib/ui";
 
@@ -102,6 +102,8 @@ export function Ficha({ id, origem, foco, onClose }: { id: string; origem: Rect 
                 <Campo id="f-int" label="Interesse"><select id="f-int" className="field" value={l.interesse} onChange={(e) => set({ interesse: e.target.value })}>{INTERESSES.map((o) => <option key={o}>{o}</option>)}</select></Campo>
                 <Campo id="f-valor" label="Valor do protocolo (R$)"><input id="f-valor" className="field num" type="number" min={0} step={100} value={l.valor || ""} onChange={(e) => set({ valor: Number(e.target.value) || 0 })} placeholder="0" /></Campo>
                 <Campo id="f-mod" label="Modalidade"><select id="f-mod" className="field" value={l.modalidade} onChange={(e) => set({ modalidade: e.target.value as Lead["modalidade"] })}><option>Presencial</option><option>Online</option></select></Campo>
+                <Campo id="f-optin" label="Aceita mensagens no WhatsApp"><select id="f-optin" className="field" value={l.optin} onChange={(e) => set({ optin: e.target.value as Optin })}>{(["sim", "pendente", "nao"] as const).map((o) => <option key={o} value={o}>{OPTIN_NOME[o]}</option>)}</select></Campo>
+                <Campo id="f-tipo" label="Tipo de consulta"><select id="f-tipo" className="field" value={l.tipo} onChange={(e) => set({ tipo: e.target.value as TipoConsulta })}>{(Object.keys(TIPOS) as TipoConsulta[]).map((t) => <option key={t} value={t}>{t} · {TIPOS[t]} min</option>)}</select></Campo>
               </div>
               {l.tel && (
                 <a className="inline-flex mt-3 text-[13px] font-medium" style={{ color: "var(--gold-ink)" }} target="_blank" rel="noopener" href={`https://wa.me/55${l.tel.replace(/\D/g, "")}`}>Abrir no WhatsApp ↗</a>

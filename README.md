@@ -2,7 +2,25 @@
 
 CRM da recepção da Cintia Machado Clinic, feito pela [Sartor](https://sartordigital.com).
 
-**Telas:** Painel (conversão, atenção, consultas), Funil de pacientes (kanban com arrastar e soltar), Conversas (inbox de WhatsApp), Pacientes, Agenda, Pendências da Dra e Ajustes. Cada paciente tem uma ficha com dados, etiquetas, histórico, anotações e conversa.
+**Telas:**
+- **Painel:** fluxo do dia (esperadas → recepção → consulta → atendidas, com check-in/chamar/finalizar), WhatsApp esperando resposta, lembretes de amanhã, conversão, funil e gráficos.
+- **Funil de pacientes:** kanban com arrastar e soltar com física.
+- **Conversas:** inbox do WhatsApp com responsável, assunto, urgente, resolvidas, modelos com `/` e **sugestões de resposta por IA**.
+- **Pacientes:** tabela com filtros por etapa, etiqueta e consentimento do WhatsApp.
+- **Agenda:** dias, linha do tempo com status, ocupação e envio de lembretes.
+- **Campanhas:** disparos para um público filtrado (só quem aceitou mensagens), agendamento, prévia, métricas de entrega/leitura/resposta e modelos aprovados pela Meta.
+- **Relatórios:** faltas antes/depois dos lembretes, funil dos lembretes, consultas por semana, funil de vendas, procura por área e horários mais cheios.
+- **Pendências da Dra** e **Ajustes** (clínica, WhatsApp, lembretes, resposta automática, IA, funil, equipe, privacidade, aparência, dados).
+
+Cada paciente tem uma ficha com dados, consentimento, etiquetas, histórico, anotações e conversa.
+
+## Sugestões com IA
+
+`src/app/api/sugestoes/route.ts` chama o **Llama 3.3 70B** no plano gratuito da [Groq](https://console.groq.com) (API compatível com a da OpenAI). O prompt de sistema tem só as informações públicas da clínica e as regras: não dar orientação médica, não inventar preço/horário, orientar urgência.
+
+- A chave fica só no servidor: crie `GROQ_API_KEY` nas variáveis de ambiente da Vercel (ou em `.env.local`).
+- Sem chave, o chat usa sugestões locais por palavra-chave (`src/lib/ia.ts`), então a demo funciona igual.
+- A IA só sugere; a recepção escolhe, edita e envia.
 
 ## Rodar
 
@@ -10,7 +28,7 @@ CRM da recepção da Cintia Machado Clinic, feito pela [Sartor](https://sartordi
 npm install
 npm run dev      # http://localhost:3000
 npm run build
-npm run check    # checa o polígono da transição de tema
+npm run check    # checa a transição de tema e as sugestões locais
 ```
 
 ## Stack
@@ -20,7 +38,9 @@ Next.js 16 (App Router), React 19, Tailwind CSS 4, Motion (animações), lucide-
 ## Estado atual: demonstração
 
 - Os dados são **fictícios** e ficam salvos no `localStorage` do navegador (`src/lib/store.tsx`).
-- O WhatsApp é **simulado**: ao enviar uma mensagem, a paciente "responde" sozinha depois de ~3 s.
+- O WhatsApp é **simulado**: ao enviar uma mensagem, a paciente "responde" sozinha depois de ~3 s; lembretes e campanhas também simulam entrega, leitura e resposta.
+- Fora do horário da clínica, o quadro do dia é montado como se fossem 11h10 (`agoraClinica` em `src/lib/seed.ts`).
+- Os gráficos de faltas e consultas dos Relatórios usam números de exemplo fixos.
 
 ## Próximo passo (versão contratada)
 

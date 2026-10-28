@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
-    "check": "node --experimental-strip-types scripts/liquid.check.ts"
+    "check": "node --experimental-strip-types scripts/liquid.check.ts && node --experimental-strip-types scripts/ia.check.ts"
   },
   "dependencies": {
     "lucide-react": "^1.62.0",

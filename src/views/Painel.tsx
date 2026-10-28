@@ -1,9 +1,10 @@
 "use client";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
-import { AlertCircle, ArrowUpRight, CalendarClock, MessageCircle, Stethoscope } from "lucide-react";
+import { AlertCircle, ArrowUpRight, MessageCircle, Stethoscope } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Avatar, Seg, Vazio } from "@/components/bits";
-import { aguardandoClinica, brl, dataLonga, dias, hora, parado } from "@/lib/fmt";
+import { FluxoHoje, LembretesAmanha, WhatsAppAguardando, consultasDoDia, useRelogio } from "@/components/Hoje";
+import { aguardandoClinica, brl, dataLonga, dias, parado } from "@/lib/fmt";
 import { useCRM } from "@/lib/store";
 import { DIA, ETAPAS, ORIGENS } from "@/lib/types";
 import { rectDe, useUI } from "@/lib/ui";
@@ -33,7 +34,11 @@ export function Painel() {
 
   const atencao = leads.filter((l) => parado(l) || (aguardandoClinica(l) && l.naoLidas > 0)).sort((a, b) => a.mov - b.mov).slice(0, 6);
   const hoje0 = new Date(); hoje0.setHours(0, 0, 0, 0);
-  const proximas = leads.filter((l) => l.consulta && l.consulta >= hoje0.getTime() && l.consulta < hoje0.getTime() + 2 * DIA).sort((a, b) => a.consulta! - b.consulta!);
+  const agora = useRelogio();
+  const doDia = consultasDoDia(leads);
+  const naRecepcao = doDia.filter((l) => l.fluxo === "recepcao");
+  const esperaMedia = naRecepcao.length ? Math.round(naRecepcao.reduce((s, l) => s + Math.max(0, agora - (l.chegada ?? agora)), 0) / naRecepcao.length / 60e3) : 0;
+  const wpp = leads.filter((l) => !l.resolvida && l.msgs.length && l.msgs[l.msgs.length - 1].de === "p");
   const topOrigem = [...ORIGENS].sort((a, b) => m.ent.filter((l) => l.origem === b).length - m.ent.filter((l) => l.origem === a).length).find((o) => m.ent.some((l) => l.origem === o));
   const pend = leads.filter((l) => l.dra && !l.dra.feito).length;
 
@@ -46,10 +51,10 @@ export function Painel() {
   const maxF = Math.max(1, ...ETAPAS.map((e) => leads.filter((l) => l.etapa === e.id).length));
 
   const kpis = [
-    { l: "Conversão em agendamento", v: m.conv, suf: "%", d: `${m.ag.length} de ${m.ent.length} contatos agendaram`, destaque: true },
-    { l: "Novos contatos", v: m.ent.length, d: `nos últimos ${p} dias` },
-    { l: "Em negociação", v: m.negociacao.length, d: `${brl(m.potencial)} em protocolos abertos` },
-    { l: "Pendências da Dra", v: pend, d: "esperando a Dra", acao: () => ir("pendencias") },
+    { l: "Conversão em agendamento", v: m.conv, suf: "%", d: `${m.ag.length} de ${m.ent.length} contatos em ${p} dias`, destaque: true },
+    { l: "Consultas hoje", v: doDia.length, d: `${doDia.filter((l) => l.fluxo === "atendida").length} atendidas até agora`, acao: () => ir("agenda") },
+    { l: "Na recepção", v: naRecepcao.length, d: naRecepcao.length ? `espera média de ${esperaMedia} min` : "ninguém esperando" },
+    { l: "WhatsApp aguardando", v: wpp.length, d: `${pend} pendências com a Dra`, acao: () => ir("conversas") },
   ];
 
   return (
@@ -59,7 +64,7 @@ export function Painel() {
           <div className="eyebrow mb-1">{dataLonga(Date.now())}</div>
           <h1 className="display text-[38px] leading-[1.05] m-0">{saudacao()}, <em style={{ color: "var(--gold-ink)" }}>Ana</em></h1>
           <p className="m-0 mt-1" style={{ color: "var(--muted)" }}>
-            {atencao.length > 0 ? `${atencao.length} pacientes precisam de atenção hoje.` : "Tudo em dia por aqui."} {proximas.length} consultas hoje e amanhã.
+            {doDia.length} consultas hoje · {atencao.length > 0 ? `${atencao.length} pacientes do funil precisam de atenção.` : "funil em dia."} {brl(m.potencial)} em protocolos em negociação.
           </p>
         </div>
         <Seg id="periodo" value={per} onChange={setPer} opcoes={[{ v: "7", label: "7 dias" }, { v: "30", label: "30 dias" }, { v: "90", label: "90 dias" }]} />
@@ -77,6 +82,14 @@ export function Painel() {
             <span className="text-[12.5px]" style={{ color: k.destaque ? "var(--on-gold)" : "var(--muted)", opacity: k.destaque ? 0.85 : 1 }}>{k.d}</span>
           </motion.button>
         ))}
+      </div>
+
+      <div className="grid xl:grid-cols-[minmax(0,1fr)_340px] gap-3 items-start">
+        <FluxoHoje />
+        <div className="grid sm:grid-cols-2 xl:grid-cols-1 gap-3">
+          <WhatsAppAguardando />
+          <LembretesAmanha />
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] gap-3">
@@ -99,24 +112,6 @@ export function Painel() {
             {atencao.length === 0 && <Vazio>Nenhuma paciente esfriando. Ótimo trabalho.</Vazio>}
           </div>
         </section>
-
-        <section className="panel p-5 min-w-0">
-          <div className="flex items-center justify-between mb-4"><h2 className="eyebrow !text-[var(--ink)] m-0">Consultas hoje e amanhã</h2>
-            <button type="button" className="text-[12.5px] cursor-pointer flex items-center gap-1" style={{ color: "var(--gold-ink)" }} onClick={() => ir("agenda")}>Agenda<ArrowUpRight size={13} /></button></div>
-          <div className="flex flex-col gap-2">
-            {proximas.map((l) => (
-              <button type="button" key={l.id} onClick={(e) => abrirFicha(l.id, rectDe(e.currentTarget))} className="flex items-center gap-3 p-2.5 rounded-xl text-left cursor-pointer hover:bg-[var(--surface-2)]" style={{ border: "1px solid var(--line)" }}>
-                <span className="w-12 text-center leading-tight"><span className="block num font-medium" style={{ color: "var(--gold-ink)" }}>{hora(l.consulta!)}</span><span className="text-[10.5px]" style={{ color: "var(--muted)" }}>{new Date(l.consulta!).getDate() === new Date().getDate() ? "hoje" : "amanhã"}</span></span>
-                <span className="flex-1 min-w-0"><span className="block font-medium truncate">{l.nome}</span><span className="text-[12px]" style={{ color: "var(--muted)" }}>{l.interesse} · {l.modalidade}</span></span>
-                <CalendarClock size={16} style={{ color: "var(--ok)" }} />
-              </button>
-            ))}
-            {proximas.length === 0 && <Vazio>Nenhuma consulta marcada para hoje ou amanhã.</Vazio>}
-          </div>
-        </section>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-3">
         <section className="panel p-5 min-w-0">
           <h2 className="eyebrow !text-[var(--ink)] m-0 mb-4">Onde cada paciente está</h2>
           <div className="flex flex-col gap-2.5">

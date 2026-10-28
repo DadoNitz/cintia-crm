@@ -8,6 +8,8 @@ import { BotaoTema, Marca, Sidebar } from "@/components/Sidebar";
 import { CRMProvider, useCRM } from "@/lib/store";
 import { UICtx, VIEWS, rectDe, useUI, type Rect, type View } from "@/lib/ui";
 import { Agenda } from "@/views/Agenda";
+import { Campanhas } from "@/views/Campanhas";
+import { Relatorios } from "@/views/Relatorios";
 import { Ajustes } from "@/views/Ajustes";
 import { Conversas } from "@/views/Conversas";
 import { Funil } from "@/views/Funil";
@@ -15,7 +17,7 @@ import { Pacientes } from "@/views/Pacientes";
 import { Painel } from "@/views/Painel";
 import { Pendencias } from "@/views/Pendencias";
 
-const TELAS: Record<View, () => React.JSX.Element> = { painel: Painel, funil: Funil, conversas: Conversas, pacientes: Pacientes, agenda: Agenda, pendencias: Pendencias, ajustes: Ajustes };
+const TELAS: Record<View, () => React.JSX.Element> = { painel: Painel, funil: Funil, conversas: Conversas, pacientes: Pacientes, agenda: Agenda, campanhas: Campanhas, relatorios: Relatorios, pendencias: Pendencias, ajustes: Ajustes };
 const lerHash = (): View => { const h = location.hash.replace("#", "") as View; return VIEWS.includes(h) ? h : "painel"; };
 
 function Busca() {

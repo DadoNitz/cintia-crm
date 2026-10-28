@@ -47,6 +47,48 @@ export type Lead = {
   hist: Evento[];
   msgs: Msg[];
   naoLidas: number;
+  // WhatsApp / inbox
+  optin: Optin;
+  responsavel: string | null;
+  categoria: Categoria | null;
+  urgente: boolean;
+  resolvida: boolean;
+  // Dia da consulta
+  tipo: TipoConsulta;
+  fluxo: Fluxo | null;
+  chegada: number | null;
+  confirmada: boolean;
+  lembrete: "enviado" | "lido" | "confirmado" | null;
+};
+
+export type Optin = "sim" | "pendente" | "nao";
+export const OPTIN_NOME: Record<Optin, string> = { sim: "Aceitou", pendente: "Pendente", nao: "Recusou" };
+export const CATEGORIAS = ["Agendamento", "Dúvida", "Receita", "Resultado de exame", "Remarcar"] as const;
+export type Categoria = (typeof CATEGORIAS)[number];
+export const TIPOS = { "Primeira consulta": 60, "Acompanhamento": 40, "Implante hormonal": 30, "Retorno de exames": 30 } as const;
+export type TipoConsulta = keyof typeof TIPOS;
+export type Fluxo = "esperada" | "recepcao" | "consulta" | "atendida" | "faltou";
+
+export const EQUIPE = [
+  { id: "ana", nome: "Ana", papel: "Recepção" },
+  { id: "dra", nome: "Dra. Cintia", papel: "Médica" },
+] as const;
+export const EU = "ana";
+
+// Modelos de mensagem do WhatsApp (a Meta aprova antes de poder disparar para quem não falou com a clínica nas últimas 24h)
+export type Modelo = { id: string; nome: string; categoria: "Marketing" | "Utilidade"; status: "Aprovado" | "Em análise"; titulo: string; texto: string; botao?: string };
+export type Publico = { etapas: EtapaId[]; tags: string[]; interesses: string[] };
+export type Campanha = {
+  id: string; nome: string; modelo: string; publico: Publico;
+  status: "rascunho" | "agendada" | "enviando" | "enviada";
+  quando: number | null; enviadaEm: number | null;
+  metricas: { enviadas: number; entregues: number; lidas: number; respondidas: number; agendadas: number } | null;
+};
+export type Config = {
+  clinica: string; telefone: string; endereco: string; horario: string;
+  lembreteHoras: number; textoLembrete: string;
+  autoResposta: boolean; textoAuto: string;
+  sugestoesIA: boolean;
 };
 
 export const DIA = 864e5;
