@@ -53,11 +53,12 @@ function SugestoesIA({ l, usar }: { l: Lead; usar: (t: string) => void }) {
         </button>
       </div>
       <div className="flex gap-2 overflow-x-auto scroll-thin pb-2">
+        {/* Fora do AnimatePresence: a transição com repeat infinito valia também para a saída, e os esqueletos nunca sumiam */}
+        {carregando && [0, 1, 2].map((i) => (
+          <motion.div key={`sk${i}`} animate={{ opacity: [0.4, 0.8, 0.4] }} transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.15 }}
+            className="flex-none w-[230px] h-[64px] rounded-xl" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} />
+        ))}
         <AnimatePresence mode="popLayout">
-          {carregando && [0, 1, 2].map((i) => (
-            <motion.div key={`sk${i}`} initial={{ opacity: 0 }} animate={{ opacity: [0.4, 0.8, 0.4] }} exit={{ opacity: 0 }} transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.15 }}
-              className="flex-none w-[220px] h-[64px] rounded-xl" style={{ background: "var(--surface-2)", border: "1px solid var(--line)" }} />
-          ))}
           {!carregando && res?.sugestoes.map((s, i) => (
             <motion.button key={`${chave}-${i}-${s.rotulo}`} type="button" onClick={() => usar(s.texto)}
               initial={{ opacity: 0, y: 8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: i * 0.06, type: "spring", stiffness: 420, damping: 30 }}
