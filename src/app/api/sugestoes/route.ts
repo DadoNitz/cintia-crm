@@ -31,10 +31,13 @@ Regras:
 
 Responda SOMENTE com JSON neste formato:
 {"sugestoes":[{"rotulo":"2 a 4 palavras","texto":"mensagem"}],"etapa":"id ou null","motivo":"frase curta ou null"}
-- Exatamente 3 sugestões com abordagens diferentes: uma direta, uma mais acolhedora, uma que avança para o agendamento.
+- Exatamente 4 sugestões, cada uma com um objetivo diferente (ex.: responder a dúvida, acolher, avançar para o agendamento, pedir uma informação que falta).
+- Leia a conversa inteira, a etapa do funil e a consulta marcada. Responda ao que a paciente perguntou de verdade, sem repetir o que a clínica já disse.
+- Se a última mensagem foi da clínica, a paciente ainda não respondeu: sugira formas de retomar ou continuar (confirmar a consulta, lembrar de exames, perguntar se ficou dúvida), nunca agradeça por uma mensagem que ela não mandou.
+- Se há consulta marcada, use o dia e a hora informados. Se há pendência com a Dra, considere-a.
 - "etapa": a próxima etapa do funil, se a conversa indicar mudança. Ids válidos: ${IDS.join(", ")}. Se não mudar, null.`;
 
-type Entrada = { paciente?: { nome?: string; interesse?: string; etapa?: string }; msgs?: { de?: string; texto?: string }[] };
+type Entrada = { paciente?: { nome?: string; interesse?: string; etapa?: string; tags?: string[]; consulta?: string | null; pendenciaDra?: string | null; hoje?: string }; msgs?: { de?: string; texto?: string; quando?: string }[] };
 
 // shortcut: limite por IP em memória, vale por instância serverless; trocar por Upstash/Redis se o uso crescer.
 const janela = new Map<string, number[]>();
@@ -56,13 +59,18 @@ export async function POST(req: Request) {
   try { body = await req.json(); } catch { return NextResponse.json({ erro: "json" }, { status: 400 }); }
   const msgs = (Array.isArray(body.msgs) ? body.msgs : []).slice(-12)
     .filter((m) => typeof m?.texto === "string" && m.texto.trim())
-    .map((m) => `${m.de === "c" ? "Clínica" : "Paciente"}: ${m.texto!.slice(0, 600)}`);
+    .map((m) => `[${String(m.quando ?? "").slice(0, 20)}] ${m.de === "c" ? "Clínica" : "Paciente"}: ${m.texto!.slice(0, 600)}`);
   if (!msgs.length) return NextResponse.json({ erro: "vazio" }, { status: 400 });
   const p = body.paciente ?? {};
   const contexto = [
     `Paciente: ${String(p.nome ?? "").slice(0, 80)}`,
     `Interesse: ${String(p.interesse ?? "").slice(0, 60)}`,
     `Etapa atual do funil: ${IDS.includes(p.etapa as never) ? p.etapa : "desconhecida"}`,
+    `Etiquetas: ${Array.isArray(p.tags) ? p.tags.slice(0, 8).map((t) => String(t).slice(0, 30)).join(", ") || "nenhuma" : "nenhuma"}`,
+    `Consulta: ${p.consulta ? String(p.consulta).slice(0, 120) : "nenhuma marcada"}`,
+    `Pendência com a Dra: ${p.pendenciaDra ? String(p.pendenciaDra).slice(0, 160) : "nenhuma"}`,
+    `Hoje é ${String(p.hoje ?? "").slice(0, 40)}.`,
+    `Quem mandou a última mensagem: ${msgs[msgs.length - 1].includes("] Clínica:") ? "a clínica (a paciente ainda não respondeu)" : "a paciente"}`,
     "Conversa (mais antiga primeiro):",
     ...msgs,
   ].join("\n");
@@ -72,7 +80,7 @@ export async function POST(req: Request) {
       method: "POST",
       headers: { Authorization: `Bearer ${chave}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: MODELO, temperature: 0.6, max_tokens: 700, response_format: { type: "json_object" },
+        model: MODELO, temperature: 0.6, max_tokens: 900, response_format: { type: "json_object" },
         messages: [{ role: "system", content: SISTEMA }, { role: "user", content: contexto }],
       }),
       signal: AbortSignal.timeout(15_000),
@@ -82,7 +90,7 @@ export async function POST(req: Request) {
     const json = JSON.parse(dados.choices?.[0]?.message?.content ?? "{}");
     const sugestoes = (Array.isArray(json.sugestoes) ? json.sugestoes : [])
       .filter((s: unknown): s is { rotulo: string; texto: string } => !!s && typeof (s as { texto?: unknown }).texto === "string")
-      .slice(0, 3)
+      .slice(0, 4)
       .map((s: { rotulo?: string; texto: string }) => ({ rotulo: String(s.rotulo ?? "Sugestão").slice(0, 40), texto: s.texto.slice(0, 700) }));
     if (!sugestoes.length) return NextResponse.json({ erro: "formato" }, { status: 502 });
     const etapa = IDS.includes(json.etapa) && json.etapa !== p.etapa ? json.etapa : null;

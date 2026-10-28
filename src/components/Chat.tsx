@@ -25,7 +25,6 @@ function SugestoesIA({ l, usar }: { l: Lead; usar: (t: string) => void }) {
   const chave = `${l.id}:${l.msgs.length}`;
   const [res, setRes] = useState<Resultado | null>(cache.get(chave) ?? null);
   const [carregando, setCarregando] = useState(false);
-  const ultimaDaPaciente = l.msgs[l.msgs.length - 1]?.de === "p";
 
   const pedir = useCallback(async (forcar = false) => {
     if (!forcar && cache.has(chave)) { setRes(cache.get(chave)!); return; }
@@ -37,8 +36,9 @@ function SugestoesIA({ l, usar }: { l: Lead; usar: (t: string) => void }) {
 
   useEffect(() => {
     setRes(cache.get(chave) ?? null);
-    if (config.sugestoesIA && ultimaDaPaciente && !cache.has(chave)) pedir();
-  }, [chave, ultimaDaPaciente, config.sugestoesIA, pedir]);
+    // Sugere sempre ao abrir: se a paciente falou, respostas; se a clínica falou por último, formas de retomar
+    if (config.sugestoesIA && !cache.has(chave)) pedir();
+  }, [chave, config.sugestoesIA, pedir]);
 
   if (!config.sugestoesIA) return null;
   return (

@@ -78,7 +78,7 @@ function Shell() {
     window.addEventListener("hashchange", h); return () => window.removeEventListener("hashchange", h);
   }, []);
 
-  const ir = useCallback((v: View) => { if (location.hash !== `#${v}`) location.hash = v; setView(v); window.scrollTo({ top: 0 }); }, []);
+  const ir = useCallback((v: View) => { if (location.hash !== `#${v}`) location.hash = v; setView(v); }, []);
   const abrirFicha = useCallback((id: string, origem?: Rect | null, foco?: "nome") => setFicha({ id, origem: origem ?? null, foco }), []);
   const abrirConversa = useCallback((id: string) => { setFicha(null); setConversaId(id); ir("conversas"); }, [ir]);
   const novoContato = useCallback(() => { const id = criar({}); setFicha({ id, origem: null, foco: "nome" }); }, [criar]);
@@ -101,7 +101,7 @@ function Shell() {
           </header>
           <main className="pt-3 pb-28 md:pb-10" style={{ paddingLeft: "max(16px, env(safe-area-inset-left))", paddingRight: "max(16px, env(safe-area-inset-right))" }}>
             <div className="md:px-4">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="wait" onExitComplete={() => document.getElementById("conteudo")?.scrollTo({ top: 0 })}>
                 <motion.div key={view} initial={{ opacity: 0, y: 14, filter: "blur(4px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
                   transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}>
                   <Tela />

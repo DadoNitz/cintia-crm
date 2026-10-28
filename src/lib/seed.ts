@@ -178,7 +178,7 @@ export function seed(): Lead[] {
       [30, "c", "Carla, seu link da consulta online chega 1h antes 🤍"],
     ], { consulta: diaUtil(10, 30, 2), modalidade: "Online", valor: 3900 }),
     lead("Isadora Meyer", "(51) 99231-5508", "Instagram", "Longevidade", "agendado", 6, 2, ["VIP"], [
-      [15, "c", "Isadora, tudo certo para quinta às 11h"],
+      [15, "c", "Isadora, sua consulta com a Dra. Cintia está marcada para as 11h ✨"],
     ], { consulta: diaUtil(11, 0, 3), valor: 6200, tipo: "Primeira consulta" }),
     lead("Helena Pires", "(51) 98144-7790", "Indicação", "Saúde hormonal", "agendado", 16, 9, ["Indicação"], [], { consulta: diaUtil(14, 30, 4), valor: 3900 }),
     lead("Letícia Brandt", "(51) 99081-3366", "Instagram", "Hipertrofia", "agendado", 40, 35, [], [], { consulta: diaUtil(15, 0, -20), valor: 3500 }),
