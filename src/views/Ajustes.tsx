@@ -120,7 +120,7 @@ export function Ajustes() {
         <Liga id="cfg-ia" on={config.sugestoesIA} onChange={(v) => set({ sugestoesIA: v })} label="Mostrar sugestões nas conversas" />
         <div className="rounded-xl p-3 text-[13px] flex gap-3" style={{ background: "var(--surface-2)" }}>
           <Bot size={18} className="flex-none" style={{ color: "var(--gold-ink)" }} />
-          <div>Modelo Llama 3.3 70B, gratuito pela Groq. Ele conhece só as informações da clínica (áreas, convênio, consulta online, horário). Não dá orientação médica, não inventa preço ou horário e, em sinal de urgência, orienta procurar atendimento.</div>
+          <div>Modelo aberto GPT-OSS 120B, gratuito pela Groq. Ele conhece só as informações da clínica (áreas, convênio, consulta online, horário). Não dá orientação médica, não inventa preço ou horário e, em sinal de urgência, orienta procurar atendimento.</div>
         </div>
       </Bloco>
     ),

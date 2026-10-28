@@ -46,7 +46,7 @@ function SugestoesIA({ l, usar }: { l: Lead; usar: (t: string) => void }) {
       <div className="flex items-center gap-2 mb-2 text-[11.5px]" style={{ color: "var(--muted)" }}>
         <Sparkles size={13} style={{ color: "var(--gold)" }} />
         <span className="font-medium" style={{ color: "var(--ink)" }}>Sugestões</span>
-        {res && <span>{res.fonte === "ia" ? "por IA · revise antes de enviar" : "rápidas · IA não configurada"}</span>}
+        {res && <span>{res.fonte === "ia" ? "por IA · revise antes de enviar" : `rápidas · ${res.aviso ?? "IA não configurada"}`}</span>}
         <button type="button" onClick={() => pedir(true)} disabled={carregando} className="ml-auto flex items-center gap-1 cursor-pointer hover:text-[var(--ink)]" aria-label="Gerar novas sugestões">
           <motion.span animate={carregando ? { rotate: 360 } : { rotate: 0 }} transition={carregando ? { repeat: Infinity, duration: 0.9, ease: "linear" } : {}}><RefreshCw size={12} /></motion.span>
           {res ? "Gerar outras" : "Sugerir respostas"}

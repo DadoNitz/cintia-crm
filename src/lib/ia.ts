@@ -1,7 +1,7 @@
 import type { EtapaId, Lead } from "./types";
 
 export type Sugestao = { rotulo: string; texto: string };
-export type Resultado = { sugestoes: Sugestao[]; etapa: EtapaId | null; motivo: string | null; fonte: "ia" | "local" };
+export type Resultado = { sugestoes: Sugestao[]; etapa: EtapaId | null; motivo: string | null; fonte: "ia" | "local"; aviso?: string };
 
 const primeiro = (nome: string) => nome.split(" ")[0] || "";
 const tem = (t: string, ...p: string[]) => p.some((x) => t.includes(x));
@@ -139,10 +139,13 @@ export async function pedirSugestoes(l: Lead): Promise<Resultado> {
         msgs: l.msgs.slice(-12).map(({ de, texto, t }) => ({ de, texto, quando: new Date(t).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) })),
       }),
     });
-    if (!r.ok) throw new Error(String(r.status));
-    const j = await r.json();
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) {
+      const aviso = j.erro === "sem-chave" ? "IA não configurada" : j.erro === "limite" ? "limite da IA atingido, tente em 1 min" : j.erro === "chave" ? "chave da IA inválida" : "IA fora do ar agora";
+      return { ...sugestoesLocais(l), aviso };
+    }
     return { sugestoes: j.sugestoes, etapa: j.etapa ?? null, motivo: j.motivo ?? null, fonte: "ia" };
   } catch {
-    return sugestoesLocais(l);
+    return { ...sugestoesLocais(l), aviso: "sem conexão" };
   }
 }

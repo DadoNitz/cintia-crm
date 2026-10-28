@@ -16,7 +16,7 @@ Cada paciente tem uma ficha com dados, consentimento, etiquetas, histórico, ano
 
 ## Sugestões com IA
 
-`src/app/api/sugestoes/route.ts` chama o **Llama 3.3 70B** no plano gratuito da [Groq](https://console.groq.com) (API compatível com a da OpenAI). O prompt de sistema tem só as informações públicas da clínica e as regras: não dar orientação médica, não inventar preço/horário, orientar urgência.
+`src/app/api/sugestoes/route.ts` chama o **GPT-OSS 120B** (com Qwen de reserva) no plano gratuito da [Groq](https://console.groq.com) (API compatível com a da OpenAI). O prompt de sistema tem só as informações públicas da clínica e as regras: não dar orientação médica, não inventar preço/horário, orientar urgência.
 
 - A chave fica só no servidor: crie `GROQ_API_KEY` nas variáveis de ambiente da Vercel (ou em `.env.local`).
 - Sem chave, o chat usa sugestões locais por palavra-chave (`src/lib/ia.ts`), então a demo funciona igual.
