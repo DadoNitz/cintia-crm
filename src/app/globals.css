@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* Identidade Cintia Machado Clinic: areia + dourado do logo; barra lateral cor de café para dar peso. */
+:root {
+  --bg: #F4F1EB; --surface: #FFFFFF; --surface-2: #FAF8F4; --line: #E7E0D5; --line-2: #D9CFC1;
+  --ink: #2B2520; --muted: #857969; --faint: #B3A797;
+  --gold: #B08D62; --gold-ink: #8A6A42; --gold-soft: #F2E9DB; --on-gold: #FFFFFF;
+  --side: #2A231D; --side-ink: #E9DFD0; --side-muted: #A6988A; --side-pill: #3A3129;
+  --ok: #5E7D55; --ok-soft: #E6EEE2; --warn: #B0672E; --warn-soft: #F7E8DA; --bad: #A64F48; --bad-soft: #F6E2DF;
+  --st-novo: #C9A77A; --st-receita: #8FA6C2; --st-protocolo: #C18F96; --st-retorno: #D29B52; --st-agendar: #9EB284; --st-agendado: #5E7D55; --st-sem: #B4AAA0;
+  --t-ouro-bg: #F3E8D6; --t-ouro: #85622F; --t-rosa-bg: #F6E3E3; --t-rosa: #9A4B52; --t-salvia-bg: #E5EDE0; --t-salvia: #4F6B47;
+  --t-ceu-bg: #E2EAF3; --t-ceu: #3F5E80; --t-terra-bg: #F3E1D3; --t-terra: #8E4F2A; --t-cinza-bg: #ECE8E2; --t-cinza: #6C6359;
+  --shadow: 0 1px 2px rgb(60 40 20 / .05), 0 6px 20px -8px rgb(60 40 20 / .14);
+  --shadow-lg: 0 30px 80px -20px rgb(40 25 10 / .35);
+  --font-display: var(--f-cormorant), "Times New Roman", serif;
+  --font-ui: var(--f-jost), "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #161310; --surface: #201C18; --surface-2: #1B1815; --line: #332D26; --line-2: #463D34;
+  --ink: #EEE7DC; --muted: #A4988A; --faint: #6F655B;
+  --gold: #C9A77A; --gold-ink: #DCC096; --gold-soft: #2E271F; --on-gold: #1B1611;
+  --side: #0F0D0B; --side-ink: #E9DFD0; --side-muted: #8C8073; --side-pill: #2A241E;
+  --ok: #9DBA8E; --ok-soft: #22291F; --warn: #E09E68; --warn-soft: #33251A; --bad: #DE8C83; --bad-soft: #35201D;
+  --st-novo: #C9A77A; --st-receita: #8FA6C2; --st-protocolo: #C9969D; --st-retorno: #DDA764; --st-agendar: #A7BC8C; --st-agendado: #86A877; --st-sem: #7F766C;
+  --t-ouro-bg: #352A1B; --t-ouro: #E1C08D; --t-rosa-bg: #3A2224; --t-rosa: #E5A5AB; --t-salvia-bg: #24301F; --t-salvia: #A9C69C;
+  --t-ceu-bg: #1E2B3A; --t-ceu: #A2BEDD; --t-terra-bg: #38251A; --t-terra: #E2A27A; --t-cinza-bg: #2C2823; --t-cinza: #B9AEA2;
+  --shadow: 0 1px 2px rgb(0 0 0 / .3), 0 8px 24px -10px rgb(0 0 0 / .5);
+  --shadow-lg: 0 30px 80px -20px rgb(0 0 0 / .7);
+  color-scheme: dark;
+}
+
+@layer base {
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+input, select, textarea { font: inherit; color: var(--ink); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+::selection { background: var(--gold-soft); }
+}
+
+/* Transição de tema: a máscara líquida é animada via JS no ::view-transition-new(root) */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { z-index: 2; }
+
+@layer components {
+.display { font-family: var(--font-display); font-weight: 500; letter-spacing: -.01em; }
+.eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.num { font-variant-numeric: tabular-nums; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.field { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; transition: border-color .15s; }
+.field:hover { border-color: var(--line-2); }
+.field:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
+.label { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 10px; padding: 9px 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; white-space: nowrap; transition: background .15s, border-color .15s, transform .1s; }
+.btn:hover { border-color: var(--line-2); background: var(--surface-2); }
+.btn:active { transform: scale(.98); }
+.btn-gold { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 500; }
+.btn-gold:hover { background: var(--gold-ink); border-color: var(--gold-ink); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover { background: var(--gold-soft); border-color: transparent; }
+.icon-btn { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.icon-btn:hover { background: var(--surface-2); }
+
+.tag { display: inline-flex; align-items: center; gap: 4px; border-radius: 99px; padding: 2px 9px; font-size: 11.5px; font-weight: 500; white-space: nowrap; }
+.tag-ouro { background: var(--t-ouro-bg); color: var(--t-ouro); } .tag-rosa { background: var(--t-rosa-bg); color: var(--t-rosa); }
+.tag-salvia { background: var(--t-salvia-bg); color: var(--t-salvia); } .tag-ceu { background: var(--t-ceu-bg); color: var(--t-ceu); }
+.tag-terra { background: var(--t-terra-bg); color: var(--t-terra); } .tag-cinza { background: var(--t-cinza-bg); color: var(--t-cinza); }
+.chip { display: inline-flex; align-items: center; gap: 5px; border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.dot { width: 7px; height: 7px; border-radius: 99px; flex: none; }
+
+.avatar { width: 34px; height: 34px; border-radius: 99px; display: grid; place-items: center; font-size: 12px; font-weight: 500; flex: none; letter-spacing: .02em; }
+.av-ouro { background: var(--t-ouro-bg); color: var(--t-ouro); } .av-rosa { background: var(--t-rosa-bg); color: var(--t-rosa); }
+.av-salvia { background: var(--t-salvia-bg); color: var(--t-salvia); } .av-ceu { background: var(--t-ceu-bg); color: var(--t-ceu); }
+.av-terra { background: var(--t-terra-bg); color: var(--t-terra); }
+
+.seg { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 11px; }
+.seg button { position: relative; border: 0; background: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.seg button[aria-pressed="true"] { color: var(--ink); }
+.seg .seg-bg { position: absolute; inset: 0; background: var(--surface); border-radius: 8px; box-shadow: var(--shadow); z-index: 0; }
+.seg span { position: relative; z-index: 1; }
+
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+.badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px; background: var(--gold); color: var(--on-gold); font-size: 11px; display: inline-grid; place-items: center; font-weight: 500; }
+}
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
